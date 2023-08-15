@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["Mason Bassett <bassettmason@gmail.com>"]
 readme = "README.md"
-packages = [{include = "flix_fire_scraper"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"

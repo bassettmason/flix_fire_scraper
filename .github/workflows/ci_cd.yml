@@ -1,0 +1,23 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: docker build -t flix_fire_scraper .
+
+    - name: Run the API
+      run: docker run -d -p 8000:8000 flix_fire_scraper
+
+    - name: Test API endpoint
+      run: |
+        sleep 10  # Give the server some time to start
+        curl http://localhost:8000/api/scrape/flixlist/
