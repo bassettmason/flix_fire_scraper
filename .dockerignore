@@ -1,0 +1,60 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Pytest and other test frameworks
+.cache/
+.pytest_cache/
+*.pytest_cache
+*.pyc
+*.pyo
+*.egg-info/
+
+# IDE related
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Runtime data
+*.pid
+*.seed
+*.out
+
+# Miscellaneous
+*.gz
+*.rar
+*.tar
+*.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.lzma
+*.tgz
+*.rar
+*.log
+*.swp
+.DS_Store
