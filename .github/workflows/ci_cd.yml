@@ -1,23 +1,35 @@
-name: Build and Test
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Build Docker image
-      run: docker build -t flix_fire_scraper .
-
-    - name: Run the API
-      run: docker run -d -p 8000:8000 flix_fire_scraper
-
-    - name: Test API endpoint
+    - name: Build and test
       run: |
-        sleep 10  # Give the server some time to start
-        curl http://localhost:8000/api/scrape/flixlist/
+        docker build -t test-image -f Dockerfile.test .
+        docker run test-image
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build and push production image
+      run: |
+        docker build -t my-production-image:latest .
+        docker push my-production-image:latest
+
+    - name: Deploy to production
+      run: ./deploy_script.sh

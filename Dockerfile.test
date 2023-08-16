@@ -1,0 +1,22 @@
+# Testing Dockerfile
+FROM python:3.11-slim
+
+# Set the PYTHONPATH environment variable
+ENV PYTHONPATH=/app:$PYTHONPATH
+
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install poetry
+RUN pip install poetry
+
+# Set poetry configurations (not to create a virtual env and install dependencies directly)
+RUN poetry config virtualenvs.create false
+
+# Install the application and development dependencies using poetry
+RUN poetry install
+
+# No EXPOSE or CMD needed as we'll specify the test command when running the container
