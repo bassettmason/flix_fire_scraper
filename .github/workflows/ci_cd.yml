@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:
@@ -13,23 +16,25 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Build and test
-      run: |
-        docker build -t test-image -f Dockerfile.test .
-        docker run test-image
+    - name: Build test image
+      run: docker build -t test-image -f Dockerfile.test .
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
+    - name: Run tests
+      run: docker run test-image pytest api/tests
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
 
-    - name: Build and push production image
-      run: |
-        docker build -t my-production-image:latest .
-        docker push my-production-image:latest
+  # deploy:
+  #   needs: test
+  #   runs-on: ubuntu-latest
 
-    - name: Deploy to production
-      run: ./deploy_script.sh
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
+
+  #   - name: Build and push production image
+  #     run: |
+  #       docker build -t my-production-image:latest .
+  #       docker push my-production-image:latest
+
+  #   - name: Deploy to production
+  #     run: ./deploy_script.sh
