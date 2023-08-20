@@ -49,13 +49,15 @@ jobs:
 
     - name: Initialize Terraform
       run: terraform init
+      working-directory: terraform
 
     - name: Apply Terraform changes
       env: 
         TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
-        TF_VAR_gcp_credentials_file: "./gcp-sa-key.json"
+        TF_VAR_gcp_credentials_file: "../gcp-sa-key.json"  # This is relative to the terraform directory
         TF_VAR_region: ${{ secrets.GCP_REGION }}
       run: terraform apply -auto-approve
+      working-directory: terraform
 
     # Authenticate Docker with the Google Artifact Registry.
     - name: Authenticate Docker to Google Artifact Registry
