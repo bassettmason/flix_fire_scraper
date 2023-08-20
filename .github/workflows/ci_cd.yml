@@ -41,13 +41,13 @@ jobs:
 
     # Authenticate Docker with the Google Artifact Registry.
     - name: Authenticate Docker to Google Artifact Registry
-      run: gcloud auth configure-docker us-central1-docker.pkg.dev
+      run: gcloud auth configure-docker us-west1-docker.pkg.dev
 
     # Build the Docker image and push it to the Artifact Registry.
     - name: Build and push production image to Artifact Registry
       run: |
-        docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-repo-name/my-fastapi-image:latest .
-        docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-repo-name/my-fastapi-image:latest
+        docker build -t us-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/media-djinn-registry/flix-fire-scraper-image:latest .
+        docker push us-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/media-djinn-registry/flix-fire-scraper-image:latest
 
     # Terraform steps with environment variables set up.
     - name: Set up Terraform

@@ -20,7 +20,7 @@ variable "service_name" {
 
 variable "image_name" {
   description = "Name of the Docker image in GAR"
-  default     = "flix-fire-scraper:latest" 
+  default     = "flix-fire-scraper-image:latest" 
 }
 
 variable "repository_id" {
