@@ -16,6 +16,8 @@ resource "google_cloud_run_service" "default" {
 
   template {
     spec {
+      service_account_name = "ci-cd-service-account@media-djinn.iam.gserviceaccount.com"
+
       containers {
         image = "us-west1-docker.pkg.dev/media-djinn/media-djinn-registry/${var.image_name}"
       }
