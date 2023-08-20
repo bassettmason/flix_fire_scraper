@@ -22,7 +22,7 @@ jobs:
     - name: Run tests
       run: docker run test-image pytest api/tests
 
-  deploy:
+  build_and_push:
     needs: test
     runs-on: ubuntu-latest
 
@@ -59,3 +59,7 @@ jobs:
       run: |
         docker build -t us-west1-docker.pkg.dev/media-djinn/media-djinn-registry/flix-fire-scraper-image:latest .
         docker push us-west1-docker.pkg.dev/media-djinn/media-djinn-registry/flix-fire-scraper-image:latest
+
+  # deploy:
+  #   needs: build_and_push
+  #   runs-on: ubuntu-latest

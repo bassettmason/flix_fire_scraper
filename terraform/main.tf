@@ -8,6 +8,11 @@ resource "google_artifact_registry_repository" "default" {
   location      = "us-west1"
   repository_id = "media-djinn-registry"
   format        = "DOCKER"
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = [repository_id]
+  }
 }
 
 
