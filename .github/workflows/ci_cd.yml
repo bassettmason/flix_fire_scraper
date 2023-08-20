@@ -22,8 +22,6 @@ jobs:
     - name: Run tests
       run: docker run test-image pytest api/tests
 
-
-
   deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -36,18 +34,14 @@ jobs:
       uses: google-github-actions/setup-gcloud@v0.2.1
       with:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
-    # Authenticate Docker with the Google Artifact Registry.
-    - name: Authenticate Docker to Google Artifact Registry
-      run: gcloud auth configure-docker us-west1-docker.pkg.dev
-
-    # Build the Docker image and push it to the Artifact Registry.
-    - name: Build and push production image to Artifact Registry
-      run: |
-        docker build -t us-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/media-djinn-registry/flix-fire-scraper-image:latest .
-        docker push us-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/media-djinn-registry/flix-fire-scraper-image:latest
+    # Write the service account key to a temporary file.
+    - name: Write GCP SA Key to File
+      run: echo '${{ secrets.GCP_SA_KEY }}' > ./gcp-sa-key.json
+      env:
+        GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
     # Terraform steps with environment variables set up.
     - name: Set up Terraform
@@ -59,6 +53,16 @@ jobs:
     - name: Apply Terraform changes
       env: 
         TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
-        TF_VAR_gcp_credentials_file: ${{ secrets.GCP_CREDENTIALS_FILE_PATH }}
+        TF_VAR_gcp_credentials_file: "./gcp-sa-key.json"
         TF_VAR_region: ${{ secrets.GCP_REGION }}
       run: terraform apply -auto-approve
+
+    # Authenticate Docker with the Google Artifact Registry.
+    - name: Authenticate Docker to Google Artifact Registry
+      run: gcloud auth configure-docker us-west1-docker.pkg.dev
+
+    # Build the Docker image and push it to the Artifact Registry.
+    - name: Build and push production image to Artifact Registry
+      run: |
+        docker build -t us-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/media-djinn-registry/flix-fire-scraper-image:latest .
+        docker push us-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/media-djinn-registry/flix-fire-scraper-image:latest
