@@ -3,7 +3,7 @@
 # import pytest
 
 # # Test the test_function from scraper.py
-
+# TODO: do unit tests
 # def test_trial_function():
 #     assert trial_function(1, 2) == 3
 #     assert trial_function(-1, -2) == -3

@@ -2,7 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 import json
 from ..models.pydantic_models import FlixListRequestModel, FlixDetailsRequestModel
-
+import datetime
+# TODO: do logging
 class WebScraperError(Exception):
     pass
 
@@ -11,7 +12,7 @@ class NetworkError(WebScraperError):
 
 class ParsingError(WebScraperError):
     pass
-
+# TODO: Consider encrypting or rotating sensitive headers such as 'cookie'.
 HEADERS = {
     'authority': 'flixpatrol.com',
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
@@ -29,9 +30,13 @@ HEADERS = {
     'upgrade-insecure-requests': '1',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
 }
+def get_current_week():
+    today = datetime.date.today()
+    year = today.strftime('%Y')  # Get the current year as string
+    week_number = today.isocalendar()[1]  # Get week number
+    return f"{year}-{week_number:03}"  # Format the week number to have leading zeros
 
 def get_response(url: str):
-    # TODO: Refactor and break this function into smaller more modular parts pretty please.
     try:
         response = requests.get(url, headers=HEADERS)
         response.raise_for_status()
@@ -40,7 +45,7 @@ def get_response(url: str):
         raise NetworkError(f"Error fetching URL: {e}")
 
 def scrape_titles(params: FlixListRequestModel):
-    week_date = "2023-032"
+    week_date = get_current_week()
     url = f"https://flixpatrol.com/top10/{params.platform}/world/{week_date}/full/"
     response = get_response(url)
     
@@ -80,6 +85,7 @@ def scrape_titles(params: FlixListRequestModel):
 
 def scrape_details(params: FlixDetailsRequestModel):
     # TODO: Refactor and break this function into smaller more modular parts pretty please.
+    # TODO: Add error handling for missing or malformed data points.
     # Request the page content
     print("scraping details")
     response = get_response(params.details_url)
