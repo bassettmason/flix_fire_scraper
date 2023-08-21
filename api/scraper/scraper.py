@@ -78,7 +78,7 @@ def scrape_titles(params: FlixListRequestModel):
 
 
 def scrape_details(params: FlixDetailsRequestModel):
-    # TODO: Refactor and break this function into smaller more modular parts.
+    # TODO: Refactor and break this function into smaller more modular parts please.
     # Request the page content
     print("scraping details")
     response = get_response(params.details_url)
