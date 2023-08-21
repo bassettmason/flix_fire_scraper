@@ -22,7 +22,7 @@ jobs:
       with:
         
         CLOSE_ISSUES: true   # Optional: if set to true, it will close issues once the TODO is removed.
-        LABEL_NAME: "TODO"   # Optional: customize the label name for issues created from TODOs.
+        LABEL: "TODO"   # Optional: customize the label name for issues created from TODOs.
       env: 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
