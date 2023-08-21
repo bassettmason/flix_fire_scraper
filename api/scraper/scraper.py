@@ -31,6 +31,7 @@ HEADERS = {
 }
 
 def get_response(url: str):
+    # TODO: Refactor and break this function into smaller more modular parts pretty please.
     try:
         response = requests.get(url, headers=HEADERS)
         response.raise_for_status()
@@ -78,7 +79,7 @@ def scrape_titles(params: FlixListRequestModel):
 
 
 def scrape_details(params: FlixDetailsRequestModel):
-    # TODO: Refactor and break this function into smaller more modular parts please.
+    # TODO: Refactor and break this function into smaller more modular parts pretty please.
     # Request the page content
     print("scraping details")
     response = get_response(params.details_url)
