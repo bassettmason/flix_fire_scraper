@@ -6,7 +6,7 @@ router = APIRouter()
 def scrape_flixlist():
     # You can put your scraping logic here.
     # For this example, I'll just return a placeholder message.
-    return {"message": "Scraped data from flixlist"}
+    return {"message": "Scraped data from flixlist test"}
 
 @router.get("/scrape/details/")
 def scrape_details():
