@@ -60,6 +60,17 @@ jobs:
         docker build -t us-west1-docker.pkg.dev/media-djinn/media-djinn-registry/flix-fire-scraper-image:latest .
         docker push us-west1-docker.pkg.dev/media-djinn/media-djinn-registry/flix-fire-scraper-image:latest
 
-  # deploy:
-  #   needs: build_and_push
-  #   runs-on: ubuntu-latest
+  deploy:
+    needs: build_and_push
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to Google Cloud Run
+      run: |
+        gcloud run deploy flix-fire-scraper-service \
+          --image us-west1-docker.pkg.dev/media-djinn/media-djinn-registry/flix-fire-scraper-image:latest \
+          --region us-west1 \
+          --platform managed \
+          --allow-unauthenticated
+          -- ingress all
+      

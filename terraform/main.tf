@@ -3,7 +3,7 @@ provider "google" {
   project     = "media-djinn"
   region      = "us-west1"
 }
-
+# below creates a artifact registry repo dont need it because its already made
 # resource "google_artifact_registry_repository" "default" {
 #   location      = "us-west1"
 #   repository_id = "media-djinn-registry"
