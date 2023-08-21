@@ -63,7 +63,7 @@ def scrape_titles(params: FlixListRequestModel):
                 title = title_elem.text
                 details_url = "https://flixpatrol.com" + title_elem.get('href') if title_elem.name == 'a' else None
                 title_obj = {
-                    "rank": index - 3,  # Subtract 2 from index to exclude non-titles
+                    "rank": index - 3,  # Subtract 3 from index to exclude non-titles
                     "title": title,
                     "details_url": details_url
                 }
@@ -157,14 +157,14 @@ def scrape_details(params: FlixDetailsRequestModel):
                 and span.get('title') is None):
                 info_spans.append(span_text.lower())
         
-    
+    slug = params.details_url.rstrip('/').split("title/")[-1]
     # Parse and map the details
     details = {
         "title": data.get("name"),
         "year": int(data.get("dateCreated").split("-")[0]) if data.get("dateCreated") else None,
         "ids": {
             "trakt": None,
-            "slug": str(params.details_url).rstrip('/').split("title/")[-1],
+            "slug": slug,
             "imdb": None if not data.get("sameAs") else next((x.split("/")[-2] for x in data["sameAs"] if "imdb.com" in x), None),
             "tmdb": None if not data.get("sameAs") else next((int(x.split("/")[-1]) for x in data["sameAs"] if "themoviedb.org" in x), None)
         },
