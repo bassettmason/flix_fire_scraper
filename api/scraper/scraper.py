@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 from ..models.pydantic_models import FlixListRequestModel, FlixDetailsRequestModel
+
 class WebScraperError(Exception):
     pass
 
@@ -58,11 +59,11 @@ def scrape_titles(params: FlixListRequestModel):
         title_elements = div.find_all(['a', 'h3'])  # Search for both 'a' and 'h3' tags
         for index, title_elem in enumerate(title_elements, start=1):
             # Skip the first two titles
-            if index > 2:
+            if index > 3:
                 title = title_elem.text
                 details_url = "https://flixpatrol.com" + title_elem.get('href') if title_elem.name == 'a' else None
                 title_obj = {
-                    "rank": index - 2,  # Subtract 2 from index to exclude non-titles
+                    "rank": index - 3,  # Subtract 2 from index to exclude non-titles
                     "title": title,
                     "details_url": details_url
                 }
@@ -163,7 +164,7 @@ def scrape_details(params: FlixDetailsRequestModel):
         "year": int(data.get("dateCreated").split("-")[0]) if data.get("dateCreated") else None,
         "ids": {
             "trakt": None,
-            "slug": params.details_url.rstrip('/').split("title/")[-1],
+            "slug": str(params.details_url).rstrip('/').split("title/")[-1],
             "imdb": None if not data.get("sameAs") else next((x.split("/")[-2] for x in data["sameAs"] if "imdb.com" in x), None),
             "tmdb": None if not data.get("sameAs") else next((int(x.split("/")[-1]) for x in data["sameAs"] if "themoviedb.org" in x), None)
         },
@@ -198,11 +199,3 @@ def scrape_details(params: FlixDetailsRequestModel):
     }
 
     return details
-
-
-
-
-
-
-def trial_function(a, b):
-    return a + b
