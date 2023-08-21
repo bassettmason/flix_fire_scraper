@@ -65,6 +65,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Authenticate gcloud with service account
+      run: gcloud auth activate-service-account --key-file=gcp-sa-key.json
+      
     - name: Deploy to Google Cloud Run
       run: |
         gcloud run deploy flix-fire-scraper-service \
