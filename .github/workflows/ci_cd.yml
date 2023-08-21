@@ -9,7 +9,25 @@ on:
       - main
 
 jobs:
+
+  create_todo_issues:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Convert TODOs to GitHub issues
+      uses: alstr/todo-to-issue-action@v4.4
+      with:
+        
+        CLOSE_ISSUES: true   # Optional: if set to true, it will close issues once the TODO is removed.
+        LABEL_NAME: "TODO"   # Optional: customize the label name for issues created from TODOs.
+      env: 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   test:
+    needs: create_todo_issues
     runs-on: ubuntu-latest
 
     steps:
@@ -87,4 +105,3 @@ jobs:
           --allow-unauthenticated \
           --ingress all \
           --project media-djinn
-      
