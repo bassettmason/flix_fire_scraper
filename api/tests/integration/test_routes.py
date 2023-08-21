@@ -3,6 +3,6 @@ from fastapi import status
 from api.main import app
 client = TestClient(app=app)
 
-def test_scrape_flixlist_route():
-    response = client.get("/api/scrape/flixlist/")
+def test_health():
+    response = client.get("/api/health/live")
     assert response.status_code == status.HTTP_200_OK
