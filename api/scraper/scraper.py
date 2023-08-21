@@ -157,7 +157,7 @@ def scrape_details(params: FlixDetailsRequestModel):
                 and span.get('title') is None):
                 info_spans.append(span_text.lower())
         
-    slug = params.details_url.rstrip('/').split("title/")[-1]
+    slug = str(params.details_url).rstrip('/').split("title/")[-1]
     # Parse and map the details
     details = {
         "title": data.get("name"),
