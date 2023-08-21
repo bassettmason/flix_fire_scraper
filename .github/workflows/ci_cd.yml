@@ -71,6 +71,7 @@ jobs:
           --image us-west1-docker.pkg.dev/media-djinn/media-djinn-registry/flix-fire-scraper-image:latest \
           --region us-west1 \
           --platform managed \
-          --allow-unauthenticated
-          -- ingress all
+          --allow-unauthenticated \
+          --ingress all \
+          --project media-djinn
       
