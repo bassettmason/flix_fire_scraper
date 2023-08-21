@@ -30,12 +30,17 @@ HEADERS = {
     'upgrade-insecure-requests': '1',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
 }
-def get_current_week():
+def get_last_week():
     today = datetime.date.today()
     year = today.strftime('%Y')  # Get the current year as string
-    week_number = today.isocalendar()[1]  # Get week number
-    return f"{year}-{week_number:03}"  # Format the week number to have leading zeros
+    week_number = today.isocalendar()[1] - 1  # Get week number and subtract 1
 
+    # Handle edge case: If week_number becomes 0 (i.e., the last week of the previous year)
+    if week_number == 0:
+        year = str(int(year) - 1)  # Reduce the year by 1
+        week_number = 52  # ISO week numbering could be either 52 or 53 weeks, but for simplicity, we're using 52.
+
+    return f"{year}-{week_number:03}"  # Format the week number to have leading zeros
 def get_response(url: str):
     try:
         response = requests.get(url, headers=HEADERS)
@@ -45,7 +50,7 @@ def get_response(url: str):
         raise NetworkError(f"Error fetching URL: {e}")
 
 def scrape_titles(params: FlixListRequestModel):
-    week_date = get_current_week()
+    week_date = get_last_week()
     url = f"https://flixpatrol.com/top10/{params.platform}/world/{week_date}/full/"
     response = get_response(url)
     
