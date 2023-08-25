@@ -10,7 +10,7 @@ class MediaListItem(BaseModel):
 
 class FlixListRequestModel(BaseModel):
     media_type: Literal["movie", "show"]
-    platform: Literal["netflix", "hbo", "paramount", "hulu", "amazon", "disney"]
+    platform: Literal["netflix", "hbo", "paramount-plus", "hulu", "amazon", "disney"]
 
     def media_type_value(self):
         media_type_map = {
@@ -21,7 +21,7 @@ class FlixListRequestModel(BaseModel):
 
 
 class FlixListResponseModel(BaseModel):
-    platform: Literal["netflix", "hbo", "paramount", "hulu", "amazon", "disney"]
+    platform: Literal["netflix", "hbo", "paramount-plus", "hulu", "amazon", "disney"]
     media_type: Literal["movie", "show"]
     media_list: List[MediaListItem]
 
