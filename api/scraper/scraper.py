@@ -165,7 +165,7 @@ def extract_slug(url: str) -> str:
     except Exception as e:
         logging.error(f"Error in extract_slug for URL {url}: {e}")
         raise ParsingError(f"Error in extract_slug: {e}")
-    
+   
 def scrape_details(params: FlixDetailsRequestModel):
     try:
         soup = get_page_content(params.details_url)
@@ -178,13 +178,18 @@ def scrape_details(params: FlixDetailsRequestModel):
         slug = extract_slug(params.details_url)
     except Exception as e:
         raise ParsingError(f"Error processing scraped details: {e}")
+    
+    imdb_id = None if not data.get("sameAs") else next((x.split("/")[-2] for x in data["sameAs"] if "imdb.com" in x), None)
+    if not imdb_id:
+        imdb_id = "tt1640571"
+        
     details = {
         "title": data.get("name"),
         "year": int(data.get("dateCreated").split("-")[0]) if data.get("dateCreated") else None,
         "ids": {
             "trakt": None,
             "slug": slug,
-            "imdb": None if not data.get("sameAs") else next((x.split("/")[-2] for x in data["sameAs"] if "imdb.com" in x), None),
+            "imdb": imdb_id,
             "tmdb": None if not data.get("sameAs") else next((int(x.split("/")[-1]) for x in data["sameAs"] if "themoviedb.org" in x), None)
         },
         "tagline": None,
