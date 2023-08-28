@@ -12,7 +12,7 @@ jobs:
 
   create_todo_issues:
     runs-on: ubuntu-latest
-
+    if: github.ref == 'refs/heads/main' 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -27,7 +27,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
-    needs: create_todo_issues
     runs-on: ubuntu-latest
 
     steps:
@@ -43,7 +42,7 @@ jobs:
   build_and_push:
     needs: test
     runs-on: ubuntu-latest
-
+    if: github.ref == 'refs/heads/main'
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -81,7 +80,7 @@ jobs:
   deploy:
     needs: build_and_push
     runs-on: ubuntu-latest
-  
+    if: github.ref == 'refs/heads/main'
     steps:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.2.1

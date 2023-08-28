@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 from ..models.pydantic_models import FlixListRequestModel, FlixDetailsRequestModel
 import datetime
+from typing import Dict, List, Optional
 # TODO: do logging
 class WebScraperError(Exception):
     pass
@@ -86,92 +87,68 @@ def scrape_titles(params: FlixListRequestModel):
         "media_list": titles_list
     }
 
+def get_page_content(url: str) -> str:
+    response = get_response(url)
+    return BeautifulSoup(response.content, 'html.parser')
 
-
-def scrape_details(params: FlixDetailsRequestModel):
-    # TODO: Refactor and break this function into smaller more modular parts pretty please.
-    # TODO: Add error handling for missing or malformed data points.
-    # Request the page content
-    print("scraping details")
-    response = get_response(params.details_url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-
-    # Extract JSON-LD script tag content
+def extract_json_data(soup: BeautifulSoup) -> Dict:
     script_content = soup.find('script', type="application/ld+json").string
-    data = json.loads(script_content)
+    return json.loads(script_content)
 
-    # Extract overview
+def extract_overview(soup: BeautifulSoup) -> str:
     overview_div = soup.select_one("div.card-body")
-    if overview_div:
-        overview = overview_div.get_text().strip()
-    else:
-        overview = None
+    return overview_div.get_text().strip() if overview_div else None
 
-    # Extract actors
+def extract_actors(soup: BeautifulSoup) -> List[str]:
     starring_div = soup.find("div", string="STARRING")
     if starring_div:
         actors_div = starring_div.find_next_sibling("div")
         if actors_div:
-            actors = [actor.strip() for actor in actors_div.get_text().split(',')]
-        else:
-            actors = []
-    else:
-        actors = []
+            return [actor.strip() for actor in actors_div.get_text().split(',')]
+    return []
 
-    # Extract IMDb rating
-# Extract IMDb rating
-    imdb_div = soup.find("div", string="imdb")
-    if imdb_div:
-        rating_div = imdb_div.find_previous_sibling("div")
-        if rating_div:
-            rating_text = rating_div.get_text().split('/')[0].strip()
+def extract_rating(soup: BeautifulSoup, keyword: str) -> Optional[float]:
+    rating_div = soup.find("div", string=keyword)
+    if rating_div:
+        score_div = rating_div.find_previous_sibling("div")
+        if score_div:
+            rating_text = score_div.get_text().split('/')[0].strip()
             try:
-                imdb_rating = float(rating_text)
-            except ValueError:  # Handle if rating_text is not convertible to float (like '-')
-                imdb_rating = None
-        else:
-            imdb_rating = None
-    else:
-        imdb_rating = None
-
-
-    # Extract Rotten Tomatoes rating (if available)
-    rt_div = soup.find("div", string="rotten tomatoes")
-    if rt_div:
-        rating_div = rt_div.find_previous_sibling("div")
-        if rating_div:
-            rating_text = rating_div.get_text().strip()
-            try:
-                rt_rating = float(rating_text)
+                return float(rating_text)
             except ValueError:
-                rt_rating = None
-        else:
-            rt_rating = None
-    else:
-        rt_rating = None
+                return None
+    return None
 
-
-
-
-     # Extract country and Genres
+def extract_info_spans(soup: BeautifulSoup) -> List[str]:
     info_div = soup.select_one("div.flex.flex-wrap.text-sm.leading-6.text-gray-500")
-    info_spans = []  # List to store spans' text meeting the criteria
-    
+    info_spans = []
     if info_div:
         spans_list = info_div.find_all("span")
         for span in spans_list:
             span_text = span.get_text(strip=True)
-    
-            # Check if span_text doesn't contain '|', any number, "Movie", "Tv Show" and doesn't have a title attribute
             if ('|' not in span_text 
                 and not any(char.isdigit() for char in span_text) 
                 and span_text != "Movie" 
                 and span_text != "Tv Show"
                 and span.get('title') is None):
                 info_spans.append(span_text.lower())
-        
-    slug = str(params.details_url).rstrip('/').split("title/")[-1]
-    # Parse and map the details
+    return info_spans
+
+def extract_slug(url: str) -> str:
+    return str(url).rstrip('/').split("title/")[-1]
+
+def scrape_details(params: FlixDetailsRequestModel):
+    try:
+        soup = get_page_content(params.details_url)
+        data = extract_json_data(soup)
+        overview = extract_overview(soup)
+        actors = extract_actors(soup)
+        imdb_rating = extract_rating(soup, "imdb")
+        rt_rating = extract_rating(soup, "rotten tomatoes")
+        info_spans = extract_info_spans(soup)
+        slug = extract_slug(params.details_url)
+    except Exception as e:
+        raise ParsingError(f"Error processing scraped details: {e}")
     details = {
         "title": data.get("name"),
         "year": int(data.get("dateCreated").split("-")[0]) if data.get("dateCreated") else None,
@@ -185,7 +162,7 @@ def scrape_details(params: FlixDetailsRequestModel):
         "overview": overview,
         "released": data.get("dateCreated"),
         "runtime": None,
-        "country": info_spans[0],
+        "country": info_spans[0] if info_spans else None,
         "updated_at": None,
         "trailer": None,
         "homepage": None,
@@ -198,17 +175,18 @@ def scrape_details(params: FlixDetailsRequestModel):
         "comment_count": None,
         "language": None,
         "available_translations": None,
-        "genres": info_spans[1:],
+        "genres": info_spans[1:] if info_spans else [],
         "certification": None,
         "directors": [director.get("name") for director in data.get("directors", [])] if data.get("directors") else [],
         "actors": actors,
-        "art": {"flix_cover": data.get("image"),
-                "logo": None,
-                "poster": None,
-                "background": None,
-                "banner": None,
-                "thumbs": None
-               }
+        "art": {
+            "flix_cover": data.get("image"),
+            "logo": None,
+            "poster": None,
+            "background": None,
+            "banner": None,
+            "thumbs": None
+        }
     }
 
     return details
