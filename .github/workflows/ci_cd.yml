@@ -27,7 +27,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
-    needs: create_todo_issues
     runs-on: ubuntu-latest
 
     steps:
