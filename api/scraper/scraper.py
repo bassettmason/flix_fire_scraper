@@ -4,7 +4,8 @@ import json
 from ..models.pydantic_models import FlixListRequestModel, FlixDetailsRequestModel
 import datetime
 from typing import Dict, List, Optional
-# TODO: do logging
+import logging
+
 class WebScraperError(Exception):
     pass
 
@@ -88,55 +89,83 @@ def scrape_titles(params: FlixListRequestModel):
     }
 
 def get_page_content(url: str) -> str:
-    response = get_response(url)
-    return BeautifulSoup(response.content, 'html.parser')
+    try:
+        response = get_response(url)
+        return BeautifulSoup(response.content, 'html.parser')
+    except Exception as e:
+        logging.error(f"Error in get_page_content for URL {url}: {e}")
+        raise ParsingError(f"Error in get_page_content: {e}")
 
 def extract_json_data(soup: BeautifulSoup) -> Dict:
-    script_content = soup.find('script', type="application/ld+json").string
-    return json.loads(script_content)
+    try:
+        script_content = soup.find('script', type="application/ld+json").string
+        return json.loads(script_content)
+    except Exception as e:
+        logging.error(f"Error in extract_json_data: {e}")
+        raise ParsingError(f"Error in extract_json_data: {e}")
 
 def extract_overview(soup: BeautifulSoup) -> str:
-    overview_div = soup.select_one("div.card-body")
-    return overview_div.get_text().strip() if overview_div else None
+    try:
+        overview_div = soup.select_one("div.card-body")
+        return overview_div.get_text().strip() if overview_div else None
+    except Exception as e:
+        logging.error(f"Error in extract_overview: {e}")
+        raise ParsingError(f"Error in extract_overview: {e}")
 
 def extract_actors(soup: BeautifulSoup) -> List[str]:
-    starring_div = soup.find("div", string="STARRING")
-    if starring_div:
-        actors_div = starring_div.find_next_sibling("div")
-        if actors_div:
-            return [actor.strip() for actor in actors_div.get_text().split(',')]
-    return []
+    try:
+        starring_div = soup.find("div", string="STARRING")
+        if starring_div:
+            actors_div = starring_div.find_next_sibling("div")
+            if actors_div:
+                return [actor.strip() for actor in actors_div.get_text().split(',')]
+        return []
+    except Exception as e:
+        logging.error(f"Error in extract_actors: {e}")
+        raise ParsingError(f"Error in extract_actors: {e}")
 
 def extract_rating(soup: BeautifulSoup, keyword: str) -> Optional[float]:
-    rating_div = soup.find("div", string=keyword)
-    if rating_div:
-        score_div = rating_div.find_previous_sibling("div")
-        if score_div:
-            rating_text = score_div.get_text().split('/')[0].strip()
-            try:
+    try:
+        rating_div = soup.find("div", string=keyword)
+        if rating_div:
+            score_div = rating_div.find_previous_sibling("div")
+            if score_div:
+                rating_text = score_div.get_text().split('/')[0].strip()
                 return float(rating_text)
-            except ValueError:
-                return None
-    return None
+        return None
+    except ValueError as e:
+        logging.error(f"ValueError in extract_rating for keyword {keyword}: {e}")
+        return None
+    except Exception as e:
+        logging.error(f"Error in extract_rating for keyword {keyword}: {e}")
+        raise ParsingError(f"Error in extract_rating: {e}")
 
 def extract_info_spans(soup: BeautifulSoup) -> List[str]:
-    info_div = soup.select_one("div.flex.flex-wrap.text-sm.leading-6.text-gray-500")
-    info_spans = []
-    if info_div:
-        spans_list = info_div.find_all("span")
-        for span in spans_list:
-            span_text = span.get_text(strip=True)
-            if ('|' not in span_text 
-                and not any(char.isdigit() for char in span_text) 
-                and span_text != "Movie" 
-                and span_text != "Tv Show"
-                and span.get('title') is None):
-                info_spans.append(span_text.lower())
-    return info_spans
+    try:
+        info_div = soup.select_one("div.flex.flex-wrap.text-sm.leading-6.text-gray-500")
+        info_spans = []
+        if info_div:
+            spans_list = info_div.find_all("span")
+            for span in spans_list:
+                span_text = span.get_text(strip=True)
+                if ('|' not in span_text 
+                    and not any(char.isdigit() for char in span_text) 
+                    and span_text != "Movie" 
+                    and span_text != "Tv Show"
+                    and span.get('title') is None):
+                    info_spans.append(span_text.lower())
+        return info_spans
+    except Exception as e:
+        logging.error(f"Error in extract_info_spans: {e}")
+        raise ParsingError(f"Error in extract_info_spans: {e}")
 
 def extract_slug(url: str) -> str:
-    return str(url).rstrip('/').split("title/")[-1]
-
+    try:
+        return str(url).rstrip('/').split("title/")[-1]
+    except Exception as e:
+        logging.error(f"Error in extract_slug for URL {url}: {e}")
+        raise ParsingError(f"Error in extract_slug: {e}")
+    
 def scrape_details(params: FlixDetailsRequestModel):
     try:
         soup = get_page_content(params.details_url)
