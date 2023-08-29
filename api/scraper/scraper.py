@@ -212,7 +212,7 @@ def scrape_details(params: FlixDetailsRequestModel):
         "directors": ["Shane Van Dyke"],
         "actors": ["Shane Van Dyke"],
         "art": {
-            "flix_cover": None,
+            "flix_cover": "https://flixpatrol.com/runtime/cache/files/posters/t/tusmxx60dgktioidnunnrjltp3t.webp",
             "logo": None,
             "poster": None,
             "background": None,
