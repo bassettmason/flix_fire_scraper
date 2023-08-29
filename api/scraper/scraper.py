@@ -181,7 +181,45 @@ def scrape_details(params: FlixDetailsRequestModel):
     
     imdb_id = None if not data.get("sameAs") else next((x.split("/")[-2] for x in data["sameAs"] if "imdb.com" in x), None)
     if not imdb_id:
-        imdb_id = "tt1640571"
+        return {
+        "title": data.get("name"),
+        "year": 2010,
+        "ids": {
+            "trakt": None,
+            "slug": "titanic-2",
+            "imdb": "tt1640571",
+            "tmdb": None
+        },
+        "tagline": None,
+        "overview": "On the 100th anniversary of the original voyage, a modern luxury liner christened \\Titanic 2,\\ follows the path of its namesake. But when a tsunami hurls an ice berg into the new ship's path, the passengers and crew must fight to avoid a similar fate.",
+        "released": "2010-08-07",
+        "runtime": None,
+        "country": "united states",
+        "updated_at": None,
+        "trailer": None,
+        "homepage": None,
+        "status": None,
+        "rating": {
+            "imdb": 1.6,
+            "rt": None
+        },
+        "votes": None,
+        "comment_count": None,
+        "language": None,
+        "available_translations": None,
+        "genres": ["action"],
+        "certification": None,
+        "directors": ["Shane Van Dyke"],
+        "actors": ["Shane Van Dyke"],
+        "art": {
+            "flix_cover": None,
+            "logo": None,
+            "poster": None,
+            "background": None,
+            "banner": None,
+            "thumbs": None
+        }
+    }
         
     details = {
         "title": data.get("name"),
