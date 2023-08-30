@@ -71,13 +71,19 @@ def scrape_titles(params: FlixListRequestModel):
     # Extract the title and details_url from the list
     if div:
         title_elements = div.find_all(['a', 'h3'])  # Search for both 'a' and 'h3' tags
+
+        # Check for "Official" tab
+        official_tab = div.find('a', text='Official')
+
+        skip_count = 3 if official_tab else 2
+
         for index, title_elem in enumerate(title_elements, start=1):
-            # Skip the first two titles
-            if index > 2:
+            # Skip based on presence or absence of "Official" tab
+            if index > skip_count:
                 title = title_elem.text
                 details_url = "https://flixpatrol.com" + title_elem.get('href') if title_elem.name == 'a' else None
                 title_obj = {
-                    "rank": index - 2,  # Subtract 2 from index to exclude non-titles
+                    "rank": index - skip_count,  # Adjust rank based on skip_count
                     "title": title,
                     "details_url": details_url
                 }
@@ -88,6 +94,7 @@ def scrape_titles(params: FlixListRequestModel):
         "media_type": params.media_type,  # use the name attribute
         "media_list": titles_list
     }
+
 
 def get_page_content(url: str) -> str:
     try:
