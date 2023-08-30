@@ -77,7 +77,7 @@ def scrape_titles(params: FlixListRequestModel):
                 title = title_elem.text
                 details_url = "https://flixpatrol.com" + title_elem.get('href') if title_elem.name == 'a' else None
                 title_obj = {
-                    "rank": index - 3,  # Subtract 3 from index to exclude non-titles
+                    "rank": index - 2,  # Subtract 2 from index to exclude non-titles
                     "title": title,
                     "details_url": details_url
                 }
