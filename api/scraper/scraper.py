@@ -41,8 +41,9 @@ def get_last_week():
     if week_number == 0:
         year = str(int(year) - 1)  # Reduce the year by 1
         week_number = 52  # ISO week numbering could be either 52 or 53 weeks, but for simplicity, we're using 52.
-
+    print(f"{year}-{week_number:03}")
     return f"{year}-{week_number:03}"  # Format the week number to have leading zeros
+
 def get_response(url: str):
     try:
         response = requests.get(url, headers=HEADERS)
@@ -72,7 +73,7 @@ def scrape_titles(params: FlixListRequestModel):
         title_elements = div.find_all(['a', 'h3'])  # Search for both 'a' and 'h3' tags
         for index, title_elem in enumerate(title_elements, start=1):
             # Skip the first two titles
-            if index > 3:
+            if index > 2:
                 title = title_elem.text
                 details_url = "https://flixpatrol.com" + title_elem.get('href') if title_elem.name == 'a' else None
                 title_obj = {
@@ -212,7 +213,7 @@ def scrape_details(params: FlixDetailsRequestModel):
         "directors": ["Shane Van Dyke"],
         "actors": ["Shane Van Dyke"],
         "art": {
-            "flix_cover": None,
+            "flix_cover": "https://flixpatrol.com/runtime/cache/files/posters/t/tusmxx60dgktioidnunnrjltp3t.webp",
             "logo": None,
             "poster": None,
             "background": None,
