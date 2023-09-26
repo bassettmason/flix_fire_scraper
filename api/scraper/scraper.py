@@ -17,20 +17,23 @@ class ParsingError(WebScraperError):
 # TODO: Consider encrypting or rotating sensitive headers such as 'cookie'.
 HEADERS = {
     'authority': 'flixpatrol.com',
-    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-    'accept-language': 'en-US,en;q=0.9,la;q=0.8',
-    'cache-control': 'max-age=0',
-    'cookie': 'flixpatrol=cf84f3c127a7449edf7df88eec331cbe; _nss=1; _ga=GA1.2.1758190770.1677534659; _gid=GA1.2.1944429410.1681412121; _gat_gtag_UA_2491325_22=1',
-    'referer': 'https://flixpatrol.com/top10/',
-    'sec-ch-ua': '"Chromium";v="112", "Google Chrome";v="112", "Not:A-Brand";v="99"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': 'Windows',
-    'sec-fetch-dest': 'document',
-    'sec-fetch-mode': 'navigate',
-    'sec-fetch-site': 'same-origin',
-    'sec-fetch-user': '?1',
-    'upgrade-insecure-requests': '1',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
+    'method': 'GET',
+    'path': '/top10/netflix/world/2023-038/full/',
+    'scheme': 'https',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Language': 'en-US,en;q=0.9,la;q=0.8',
+    'Cache-Control': 'max-age=0',
+    'Cookie': 'flixpatrol=cf84f3c127a7449edf7df88eec331cbe; _gid=GA1.2.1605022267.1695758290; userid=n12fvnax87jg8cgn; _ga_CW5LDBFGF5=GS1.1.1695758290.39.1.1695763521.0.0.0; _ga=GA1.1.1758190770.1677534659',
+    'Sec-Ch-Ua': '"Google Chrome";v="117", "Not;A=Brand";v="8", "Chromium";v="117"',
+    'Sec-Ch-Ua-Mobile': '?0',
+    'Sec-Ch-Ua-Platform': '"Windows"',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'cross-site',
+    'Sec-Fetch-User': '?1',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'
 }
 
 
