@@ -20,7 +20,7 @@ HEADERS = {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'accept-language': 'en-US,en;q=0.9,la;q=0.8',
     'cache-control': 'max-age=0',
-    'cookie': '_nss=1; _ga=GA1.2.1758190770.1677534659; _gid=GA1.2.1944429410.1681412121; _gat_gtag_UA_2491325_22=1',
+    'cookie': 'flixpatrol=cf84f3c127a7449edf7df88eec331cbe; _nss=1; _ga=GA1.2.1758190770.1677534659; _gid=GA1.2.1944429410.1681412121; _gat_gtag_UA_2491325_22=1',
     'referer': 'https://flixpatrol.com/top10/',
     'sec-ch-ua': '"Chromium";v="112", "Google Chrome";v="112", "Not:A-Brand";v="99"',
     'sec-ch-ua-mobile': '?0',
@@ -32,6 +32,8 @@ HEADERS = {
     'upgrade-insecure-requests': '1',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
 }
+
+
 def get_last_week():
     today = datetime.date.today()
     year = today.strftime('%Y')  # Get the current year as string
@@ -45,6 +47,7 @@ def get_last_week():
     return f"{year}-{week_number:03}"  # Format the week number to have leading zeros
 
 def get_response(url: str):
+
     try:
         response = requests.get(url, headers=HEADERS)
         response.raise_for_status()
